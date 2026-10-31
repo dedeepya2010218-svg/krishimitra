@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>KrishiMitra – Smart Farming Assistant for Indian Farmers</title>
+  <meta name="description" content="AI-powered farming assistant for Indian farmers. Crop disease detection, live mandi prices, weather forecasts, government schemes, soil health analysis, and multilingual voice assistant.">
+  <meta name="theme-color" content="#1e5e3a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
+
+  <!-- Nature-inspired Agriculture Stylesheet -->
+  <link rel="stylesheet" href="css/krishimitra.css">
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-wrapper" onclick="showScreen('home')" style="cursor: pointer;">
+        <div class="brand-logo-icon">🌾</div>
+        <div>
+          <div class="brand-name" data-i18n="app_title">KrishiMitra</div>
+          <div class="brand-tagline" data-i18n="app_tagline">Smart Farming Assistant for Indian Farmers</div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Audio Narration (Read Aloud) Button -->
+        <button id="audioNarrationBtn" class="btn-icon-control" title="Read Page Aloud" aria-label="Read Page Aloud">
+          🔊 <span data-i18n="read_aloud">Read Aloud</span>
+        </button>
+
+        <!-- Font Size Scaler -->
+        <button id="fontSizeBtn" class="btn-icon-control" title="Change Font Size" aria-label="Change Font Size">
+          A / A+
+        </button>
+
+        <!-- Multilingual Dropdown -->
+        <select id="langSelect" class="lang-select" aria-label="Select Language">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Location & GPS Bar -->
+  <div class="location-bar">
+    <div class="current-loc-badge">
+      <span>📍</span>
+      <select id="locationSelect" class="location-dropdown-select" aria-label="Select Location"></select>
+    </div>
+    <button id="gpsDetectBtn" class="btn-icon-control" style="padding: 4px 10px; font-size: 11px;">
+      📡 <span data-i18n="detect_gps">Use GPS</span>
+    </button>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- ==================== SCREEN 1: HOME DASHBOARD ==================== -->
+    <section id="view-home" class="view-screen active">
+      <!-- Farmer Greeting Banner -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <h2 id="farmerGreeting" style="font-size: 20px; font-weight: 800; color: var(--primary);">
+            Namaste, Ramesh Kumar ji
+          </h2>
+          <div style="font-size: 12px; color: var(--text-muted);">
+            3.5 Acres • Black Cotton Soil • Kharif Season
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="showScreen('profile')">⚙️ Profile</button>
+      </div>
+
+      <!-- Live Weather Hero Card -->
+      <div class="weather-hero" onclick="showScreen('weather')" style="cursor: pointer;" title="Click for 7-day forecast">
+        <div class="weather-hero-top">
+          <div>
+            <div class="weather-temp-huge">
+              <span id="homeWeatherIcon">🌤️</span> <span id="homeWeatherTemp">29°C</span>
+            </div>
+            <div id="homeWeatherDesc" class="weather-condition-text">Partly Cloudy</div>
+            <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Tap for 7-Day Precision Forecast →</div>
+          </div>
+          <div>
+            <span class="badge badge-high" style="background: rgba(255,255,255,0.25); color: #fff;">
+              ● Live Radar
+            </span>
+          </div>
+        </div>
+
+        <div class="weather-stats-grid">
+          <div class="weather-stat-pill">
+            <div class="weather-stat-label" data-i18n="humidity_label">Humidity</div>
+            <div id="homeHumidity" class="weather-stat-val">64%</div>
+          </div>
+          <div class="weather-stat-pill">
+            <div class="weather-stat-label" data-i18n="wind_label">Wind Speed</div>
+            <div id="homeWindSpeed" class="weather-stat-val">11 km/h</div>
+          </div>
+          <div class="weather-stat-pill">
+            <div class="weather-stat-label" data-i18n="rain_chance">Rain Chance</div>
+            <div id="homeRainChance" class="weather-stat-val">15%</div>
+          </div>
+          <div class="weather-stat-pill">
+            <div class="weather-stat-label" data-i18n="soil_moisture">Soil Moisture</div>
+            <div id="homeSoilMoisture" class="weather-stat-val">45%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Big Accessible Navigation Buttons (Rural Friendly) -->
+      <div class="quick-action-grid">
+        <a href="#crop-doctor" class="quick-action-btn" data-target="crop-doctor">
+          <div class="btn-icon">🩺</div>
+          <div class="btn-label" data-i18n="nav_crop_doctor">Crop Doctor</div>
+          <div class="btn-desc">Scan leaf diseases & cure</div>
+        </a>
+
+        <a href="#market" class="quick-action-btn" data-target="market">
+          <div class="btn-icon">📈</div>
+          <div class="btn-label" data-i18n="nav_market">Mandi Prices</div>
+          <div class="btn-desc">Live rates & MSP comparison</div>
+        </a>
+
+        <a href="#crop-recommend" class="quick-action-btn" data-target="crop-recommend">
+          <div class="btn-icon">🌱</div>
+          <div class="btn-label">Crop Advisory</div>
+          <div class="btn-desc">Find best crops for land</div>
+        </a>
+
+        <a href="#soil-health" class="quick-action-btn" data-target="soil-health">
+          <div class="btn-icon">🧪</div>
+          <div class="btn-label" data-i18n="nav_soil">Soil Health</div>
+          <div class="btn-desc">Fertilizer calculator</div>
+        </a>
+
+        <a href="#schemes" class="quick-action-btn" data-target="schemes">
+          <div class="btn-icon">🏛️</div>
+          <div class="btn-label" data-i18n="nav_schemes">Govt Schemes</div>
+          <div class="btn-desc">PM-KISAN, Subsidies & Bima</div>
+        </a>
+
+        <a href="#calendar" class="quick-action-btn" data-target="calendar">
+          <div class="btn-icon">📅</div>
+          <div class="btn-label" data-i18n="nav_calendar">Farm Calendar</div>
+          <div class="btn-desc">Sowing & harvest schedule</div>
+        </a>
+
+        <a href="#expenses" class="quick-action-btn" data-target="expenses">
+          <div class="btn-icon">💰</div>
+          <div class="btn-label" data-i18n="nav_expenses">Expenses & Profit</div>
+          <div class="btn-desc">Track farm investment</div>
+        </a>
+
+        <a href="#equipment" class="quick-action-btn" data-target="equipment">
+          <div class="btn-icon">🚜</div>
+          <div class="btn-label" data-i18n="nav_equipment">Rent Machinery</div>
+          <div class="btn-desc">Tractors, harvesters, drones</div>
+        </a>
+      </div>
+
+      <!-- Today's Farm Recommendations & Health Advisories -->
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div class="card-title" data-i18n="today_recommendation">Today's Farm Advisory</div>
+          <span class="badge badge-success">Updated Daily</span>
+        </div>
+        <div id="homeAdvisoriesList">
+          <div class="agri-alert success">
+            <div style="font-size: 22px;">🌿</div>
+            <div>
+              <div class="alert-title">Optimal Morning Spraying Window</div>
+              <div class="alert-desc">Gentle breeze and low rain chance make today ideal for preventive bio-pesticide spray between 7:00 AM - 10:30 AM.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Mandi Snapshot -->
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div class="card-title" data-i18n="market_snapshot">Today's Mandi Prices</div>
+          <button class="btn btn-outline btn-sm" onclick="showScreen('market')">View All Rates →</button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+          <div style="background: var(--bg-muted); border-radius: 8px; padding: 10px; border-left: 4px solid var(--primary);">
+            <div style="font-size: 11px; color: var(--text-muted);">Chilli (Teja)</div>
+            <div style="font-size: 17px; font-weight: 800; color: var(--primary);">₹19,200</div>
+            <div style="font-size: 11px; color: var(--success); font-weight: 700;">+4.2% Guntur</div>
+          </div>
+          <div style="background: var(--bg-muted); border-radius: 8px; padding: 10px; border-left: 4px solid var(--primary);">
+            <div style="font-size: 11px; color: var(--text-muted);">Cotton (Medium)</div>
+            <div style="font-size: 17px; font-weight: 800; color: var(--primary);">₹7,750</div>
+            <div style="font-size: 11px; color: var(--success); font-weight: 700;">Above MSP (₹7,521)</div>
+          </div>
+          <div style="background: var(--bg-muted); border-radius: 8px; padding: 10px; border-left: 4px solid var(--primary);">
+            <div style="font-size: 11px; color: var(--text-muted);">Paddy (Sona Masuri)</div>
+            <div style="font-size: 17px; font-weight: 800; color: var(--primary);">₹2,650</div>
+            <div style="font-size: 11px; color: var(--success); font-weight: 700;">+0.8% Warangal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Government Scheme Alerts Banner -->
+      <div class="agri-card" style="background: linear-gradient(135deg, #fefae0, #fcf6bd); border-color: #e9c46a;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span class="badge badge-warning" style="font-size: 11px;">📢 Govt Announcement</span>
+            <div style="font-weight: 800; font-size: 15px; color: #7c4a03; margin-top: 4px;">
+              PM-KISAN 18th Installment DBT Disbursed
+            </div>
+            <div style="font-size: 12.5px; color: #5c3905; margin-top: 2px;">
+              Verify your Aadhaar eKYC status to receive direct bank transfer of ₹2,000.
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showScreen('schemes')">Check Status</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: AI CROP DOCTOR ==================== -->
+    <section id="view-crop-doctor" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="doctor_title">AI Crop Doctor & Disease Diagnostic</h2>
+            <p class="card-subtitle" data-i18n="doctor_subtitle">Take or upload a plant photo to diagnose diseases, symptoms & remedies</p>
+          </div>
+        </div>
+
+        <!-- Camera Scanner Viewfinder -->
+        <div id="scannerBox" class="camera-scanner-box">
+          <div class="scanner-laser-line"></div>
+          <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 48px; margin-bottom: 8px;">📷</div>
+            <div style="font-size: 14px; font-weight: 600;">Point camera at affected leaf or upload a photo</div>
+            <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Works offline & supports instant visual pattern analysis</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+          <input type="file" id="doctorUploadInput" accept="image/*" style="display: none;">
+          <button id="doctorCameraBtn" class="btn btn-primary btn-full">
+            📸 <span data-i18n="take_photo">Take Photo with Camera</span>
+          </button>
+          <button class="btn btn-secondary btn-full" onclick="document.getElementById('doctorUploadInput').click()">
+            📁 <span data-i18n="upload_photo">Upload Photo</span>
+          </button>
+        </div>
+
+        <!-- Instant Test Samples for Demonstration -->
+        <div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);" data-i18n="or_select_sample">
+            Or test with common Indian crop samples:
+          </div>
+          <div id="samplePillsContainer" class="sample-pills-wrap"></div>
+        </div>
+
+        <!-- Diagnosis Result Container -->
+        <div id="diagnosisContainer"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: SMART CROP RECOMMENDATIONS ==================== -->
+    <section id="view-crop-recommend" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="recommend_title">Smart Crop Recommendations</h2>
+            <p class="card-subtitle" data-i18n="recommend_subtitle">Find suitable high-yield crops for your soil, water source, and budget</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" data-i18n="select_state">State</label>
+            <select id="recStateSelect" class="form-select">
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_type">Soil Type</label>
+            <select id="recSoilSelect" class="form-select">
+              <option value="Black Cotton">Black Cotton Soil (Regur)</option>
+              <option value="Red Sandy Loam">Red Sandy Loam</option>
+              <option value="Alluvial">Alluvial Soil</option>
+              <option value="Clayey Loam">Clayey Loam</option>
+              <option value="Laterite">Laterite Soil</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="water_availability">Water Source</label>
+            <select id="recWaterSelect" class="form-select">
+              <option value="Borewell & Drip">Borewell with Drip Irrigation</option>
+              <option value="Canal">Canal Irrigation</option>
+              <option value="Rainfed">Rainfed (Dryland / Monsoon dependent)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="farming_season">Season</label>
+            <select id="recSeasonSelect" class="form-select">
+              <option value="Kharif">Kharif (Monsoon: June - Oct)</option>
+              <option value="Rabi">Rabi (Winter: Oct - March)</option>
+              <option value="Zaid">Zaid (Summer: March - June)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="farm_size_label">Farm Size (Acres)</label>
+            <input type="number" id="recFarmSize" class="form-control" value="2" min="0.5" step="0.5">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="budget_label">Budget (₹/Acre)</label>
+            <input type="number" id="recBudget" class="form-control" value="25000" step="1000">
+          </div>
+        </div>
+
+        <button id="findCropsBtn" class="btn btn-primary btn-full" style="margin-top: 10px;">
+          🌾 <span data-i18n="get_recommendations">Find Best Crops for My Land</span>
+        </button>
+
+        <div id="recommendationsList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 4: WEATHER FORECAST ==================== -->
+    <section id="view-weather" class="view-screen">
+      <div id="fullWeatherDetails"></div>
+    </section>
+
+    <!-- ==================== SCREEN 5: SOIL HEALTH ANALYSIS ==================== -->
+    <section id="view-soil-health" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="soil_title">Soil Health Card & Fertility Analyzer</h2>
+            <p class="card-subtitle" data-i18n="soil_subtitle">Scientific fertilizer recommendations based on soil test parameters</p>
+          </div>
+        </div>
+
+        <!-- Sample Presets -->
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+            Load Sample Soil Test Cards:
+          </div>
+          <div id="sampleSoilPresets" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+        </div>
+
+        <!-- Soil Parameters Entry Form -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_ph">Soil pH</label>
+            <input type="number" id="soilPhInput" class="form-control" value="7.2" step="0.1" min="3" max="11">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_n">Nitrogen (kg/ha)</label>
+            <input type="number" id="soilNInput" class="form-control" value="220" step="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_p">Phosphorus (kg/ha)</label>
+            <input type="number" id="soilPInput" class="form-control" value="16" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_k">Potassium (kg/ha)</label>
+            <input type="number" id="soilKInput" class="form-control" value="280" step="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="soil_oc">Organic Carbon (%)</label>
+            <input type="number" id="soilOcInput" class="form-control" value="0.48" step="0.05" min="0" max="2">
+          </div>
+        </div>
+
+        <button id="analyzeSoilBtn" class="btn btn-primary btn-full" style="margin-top: 10px;">
+          🧪 <span data-i18n="calculate_fertility">Analyze Soil Health & Recommend Doses</span>
+        </button>
+
+        <div id="soilReportOutput"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 6: MARKET PRICE TRACKER ==================== -->
+    <section id="view-market" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="market_title">Live Mandi Prices & MSP Tracker</h2>
+            <p class="card-subtitle" data-i18n="market_subtitle">Official Agmarknet / APMC market rates, trends & distance calculator</p>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="form-group">
+          <input type="text" id="marketSearchInput" class="form-control" placeholder="Search crop or mandi (e.g. Chilli, Cotton, Khanna, Warangal)..." data-i18n="search_crop_mandi">
+        </div>
+
+        <div id="mandiPriceCards"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 7: GOVERNMENT SCHEMES ==================== -->
+    <section id="view-schemes" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="schemes_title">Government Farmer Schemes & Subsidies</h2>
+            <p class="card-subtitle" data-i18n="schemes_subtitle">Central & State welfare programs, eligibility, documents & official portals</p>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1.5px solid #81c784; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 800; font-size: 16px; color: #1b4332;">
+              🔍 Are you receiving all eligible farmer subsidies?
+            </div>
+            <div style="font-size: 12.5px; color: #2e5a40; margin-top: 2px;">
+              Answer 3 simple questions to calculate your total annual financial assistance.
+            </div>
+          </div>
+          <button id="checkEligibilityBtn" class="btn btn-primary btn-sm">
+            Check My Eligibility
+          </button>
+        </div>
+
+        <div id="schemesList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 8: FARMING CALENDAR ==================== -->
+    <section id="view-calendar" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="calendar_title">Personalized Farming Calendar</h2>
+            <p class="card-subtitle" data-i18n="calendar_subtitle">Complete milestone timeline from sowing to harvesting</p>
+          </div>
+        </div>
+
+        <!-- Plan Builder Form -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; background: var(--bg-muted); padding: 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" data-i18n="select_crop_calendar">Choose Sown Crop</label>
+            <select id="calendarCropSelect" class="form-select">
+              <option value="chilli">Chilli (Red / Green)</option>
+              <option value="paddy">Paddy / Rice</option>
+              <option value="cotton">Cotton</option>
+              <option value="wheat">Wheat</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" data-i18n="sowing_date">Sowing Date</label>
+            <input type="date" id="calendarSowingDate" class="form-control">
+          </div>
+          <div style="display: flex; align-items: flex-end;">
+            <button id="createPlanBtn" class="btn btn-primary btn-full">
+              📅 <span data-i18n="generate_schedule">Build Farming Schedule</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="activePlansList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 9: AI FARMING CHATBOT ==================== -->
+    <section id="view-ai-chat" class="view-screen">
+      <div class="agri-card" style="padding: 12px;">
+        <div class="agri-card-header" style="margin-bottom: 8px;">
+          <div>
+            <h2 class="card-title" data-i18n="chat_title">AI Kisan Mitra - 24/7 Voice & Text Assistant</h2>
+            <p class="card-subtitle" data-i18n="chat_subtitle">Ask questions in Telugu, Hindi, Tamil, Kannada, Marathi or English</p>
+          </div>
+        </div>
+
+        <!-- Quick suggestion pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+          <button class="sample-chip chat-suggestion-chip">Why are leaves turning yellow?</button>
+          <button class="sample-chip chat-suggestion-chip">How often to irrigate paddy?</button>
+          <button class="sample-chip chat-suggestion-chip">How to cure chilli leaf curl?</button>
+          <button class="sample-chip chat-suggestion-chip">Today's cotton MSP rate?</button>
+          <button class="sample-chip chat-suggestion-chip">Government schemes for drip irrigation?</button>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window">
+          <div id="chatMessages" class="chat-messages">
+            <div class="chat-bubble bot">
+              Namaste! I am your AI KrishiMitra. You can speak or type in Hindi, Telugu, English, Tamil, Kannada, or Marathi. How can I help your farm today?
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <button id="chatVoiceBtn" class="voice-record-btn" title="Speak Question" aria-label="Microphone">
+              🎤
+            </button>
+            <input type="text" id="chatInput" class="form-control" placeholder="Ask question (e.g. why are chilli leaves curling?)..." data-i18n="chat_placeholder">
+            <button id="chatSendBtn" class="btn btn-primary btn-sm" style="padding: 0 16px;">
+              Send ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 10: EXPENSE AND PROFIT CALCULATOR ==================== -->
+    <section id="view-expenses" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="expenses_title">Farm Expense & Profit Ledger</h2>
+            <p class="card-subtitle" data-i18n="expenses_subtitle">Track investments, labour, yields, and net profit per acre</p>
+          </div>
+        </div>
+
+        <div id="expenseSummaryStats"></div>
+
+        <!-- Add Entry Form -->
+        <form id="addExpenseForm" style="background: var(--bg-muted); padding: 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--primary);">
+            + Add New Ledger Entry
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Type</label>
+              <select id="ledgerTypeSelect" class="form-select">
+                <option value="expense">Expense (खर्च / ఖర్చు)</option>
+                <option value="income">Crop Sale Income (आमदनी / రాబడి)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Category</label>
+              <select id="ledgerCategoryInput" class="form-select">
+                <option value="Seeds">Seeds</option>
+                <option value="Fertilizer">Fertilizer</option>
+                <option value="Pesticides">Pesticides / Bio-inputs</option>
+                <option value="Labour">Labour Charges</option>
+                <option value="Machinery">Machinery / Tractor Hire</option>
+                <option value="Irrigation">Irrigation / Electricity</option>
+                <option value="Harvesting">Harvesting & Threshing</option>
+                <option value="Transport">Transport to Mandi</option>
+                <option value="Crop Sale">Harvest Produce Sale</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Crop Tag</label>
+              <input type="text" id="ledgerCropInput" class="form-control" value="Chilli">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Amount (₹)</label>
+              <input type="number" id="ledgerAmountInput" class="form-control" placeholder="₹ Amount" required>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
+            <input type="text" id="ledgerNotesInput" class="form-control" placeholder="Notes (e.g. purchased 2 bags DAP from cooperative)">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 10px;">
+            Save to Ledger
+          </button>
+        </form>
+
+        <div id="expenseLedgerTable" class="mandi-table-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 11: EQUIPMENT & RENTAL SERVICES ==================== -->
+    <section id="view-equipment" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="equipment_title">Equipment & Custom Hiring Rental Centre</h2>
+            <p class="card-subtitle" data-i18n="equipment_subtitle">Rent tractors, combine harvesters, drone sprayers & farm machinery</p>
+          </div>
+        </div>
+
+        <div id="equipmentRentalList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 12: COMMUNITY AND EXPERT SUPPORT ==================== -->
+    <section id="view-community" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div>
+            <h2 class="card-title" data-i18n="community_title">Kisan Charcha & Expert Agricultural Support</h2>
+            <p class="card-subtitle" data-i18n="community_subtitle">Discuss farming with peers and access verified KVK scientists</p>
+          </div>
+          <button id="createCommunityPostBtn" class="btn btn-primary btn-sm">
+            ✍️ <span data-i18n="ask_community">Ask Question</span>
+          </button>
+        </div>
+
+        <!-- Helpline Banner -->
+        <div class="agri-card" style="background: linear-gradient(135deg, #e0f2fe, #bae6fd); border-color: #7dd3fc; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 16px; font-weight: 800; color: #0369a1;">
+                📞 National Kisan Call Centre (Toll-Free)
+              </div>
+              <div style="font-size: 13px; color: #0284c7; margin-top: 2px;">
+                Direct dial 1800-180-1551 • 22 Indian languages • 6:00 AM - 10:00 PM
+              </div>
+            </div>
+            <a href="tel:18001801551" class="btn btn-primary btn-sm">Call 1800-180-1551</a>
+          </div>
+        </div>
+
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 10px;">
+          🌾 Recent Community Discussions:
+        </h3>
+        <div id="communityPostsList"></div>
+
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin: 20px 0 10px;">
+          🏛️ Verified Agricultural Scientists & University Contacts:
+        </h3>
+        <div id="expertsDirectoryList"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 13: FARMER PROFILE ==================== -->
+    <section id="view-profile" class="view-screen">
+      <div class="agri-card">
+        <div class="agri-card-header">
+          <div class="card-title">👨‍🌾 Farmer Profile & Farm Settings</div>
+        </div>
+
+        <form id="profileForm">
+          <div class="form-group">
+            <label class="form-label">Farmer Full Name</label>
+            <input type="text" id="profName" class="form-control" value="Ramesh Kumar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State & District</label>
+            <input type="text" id="profLocation" class="form-control" value="Guntur, Andhra Pradesh">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Land Holding (Acres)</label>
+            <input type="number" id="profAcres" class="form-control" value="3.5" step="0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dominant Soil Type</label>
+            <select id="profSoil" class="form-select">
+              <option value="Black Cotton">Black Cotton Soil</option>
+              <option value="Red Sandy Loam">Red Sandy Loam</option>
+              <option value="Alluvial">Alluvial Soil</option>
+              <option value="Clay Loam">Clay Loam</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Irrigation Source</label>
+            <select id="profIrrigation" class="form-select">
+              <option value="Borewell & Drip">Borewell & Drip</option>
+              <option value="Canal">Canal Irrigation</option>
+              <option value="Rainfed">Rainfed</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary btn-full" onclick="showToast('Profile updated!')">
+            Save Changes
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Mobile Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-screen="home">
+      <div class="nav-icon">🏠</div>
+      <div data-i18n="nav_home">Home</div>
+    </button>
+    <button class="nav-item" data-screen="crop-doctor">
+      <div class="nav-icon">🩺</div>
+      <div data-i18n="nav_crop_doctor">Doctor</div>
+    </button>
+    <button class="nav-item" data-screen="market">
+      <div class="nav-icon">📈</div>
+      <div data-i18n="nav_market">Market</div>
+    </button>
+    <button class="nav-item" data-screen="ai-chat">
+      <div class="nav-icon">🤖</div>
+      <div data-i18n="nav_ai_chat">AI Chat</div>
+    </button>
+    <button class="nav-item" data-screen="my-farm">
+      <div class="nav-icon">🌾</div>
+      <div data-i18n="nav_my_farm">My Farm</div>
+    </button>
+  </nav>
+
+  <!-- Reusable Modal Backdrop -->
+  <div id="genericModal" class="modal-backdrop">
+    <div class="modal-card">
+      <button class="modal-close-btn">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/translations.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/crop-doctor.js"></script>
+  <script src="js/crop-recommend.js"></script>
+  <script src="js/soil.js"></script>
+  <script src="js/market.js"></script>
+  <script src="js/schemes.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/expenses.js"></script>
+  <script src="js/equipment.js"></script>
+  <script src="js/community.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Progressive Web App Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(e => console.log('SW registration note:', e));
+      });
+    }
+  </script>
+</body>
+</html>
